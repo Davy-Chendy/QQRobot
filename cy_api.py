@@ -118,6 +118,42 @@ def add_function(adddict,rev):
 def del_function(rev):
     del_dict(rev, "/del ", 0, 5)
 
+def jrrp_judge(qq,time):
+    with open("save_jrrp.json")as json_file:
+        try:
+            json_data = json.load(json_file)
+        except Exception as ex:
+            print(ex)
+    if qq in json_data:
+        if json_data[qq] == time.day:
+            return False
+        else:
+            return True
+    else:
+            return True
+
+def jrrp_function(rev,time):
+    s = str(random.randint(0,100))
+    qq = str(rev['sender']['user_id'])
+    group = rev['group_id']
+    if rev['raw_message'] == '/jrrp':
+        if jrrp_judge(qq,time):
+            print("jrrp")
+            send_msg({'msg_type': 'group', 'number': group, 'msg': "[CQ:at,qq="+qq+"]"+"你今日的人品是"+s+"（越低越好）"})
+            dict = {}
+            dict[qq] = time.day
+            dict[qq+'jrrp'] = s
+            jsObj = json.dumps(dict)
+            fileObject = open(r'save_jrrp.json', 'w')
+            fileObject.write(jsObj)
+            fileObject.close()
+        else:
+            with open("save_jrrp.json")as json_file:
+                json_data = json.load(json_file)
+                for key in json_data:
+                    if key == qq+'jrrp':
+                        send_msg({'msg_type': 'group', 'number': group,
+                                  'msg': "[CQ:at,qq=" + qq + "]" + "你今日的人品是" + json_data[key] + "（越低越好）"})
 
 
 
