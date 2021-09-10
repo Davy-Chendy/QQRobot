@@ -5,6 +5,7 @@ import json
 import requests
 import json
 import random
+import weather
 
 ListenSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 ListenSocket.bind(('127.0.0.1', 8000))
@@ -154,6 +155,31 @@ def jrrp_function(rev,time):
                     if key == qq+'jrrp':
                         send_msg({'msg_type': 'group', 'number': group,
                                   'msg': "[CQ:at,qq=" + qq + "]" + "你今日的人品是" + json_data[key] + "（越低越好）"})
+
+def weather_init(rev,name,url):
+    group = rev['group_id']
+    spider = weather.WeatherSpider()
+    spider.init_url(url)
+    data = spider.result()
+    date = data['date']
+    wea = data['weather']
+    temp_max = data['temperature_max']
+    temp_in = data['temperature_min']
+    air = data['air_speed']
+    send_msg({'msg_type': 'group', 'number': group,
+              'msg': name + date + "的天气情况：" + "天气：" + wea + " 温度: " + temp_in + "~" + temp_max + " 风速：" + air})
+
+def weather_report(rev):
+    if rev['raw_message'][0:3] == '/天气':
+        spider = weather.WeatherSpider()
+        if rev['raw_message'][4:] == '广州':
+            weather_init(rev,"广州","http://www.weather.com.cn/weather/101280101.shtml")
+        if rev['raw_message'][4:] == '北京':
+            weather_init(rev, "北京", "http://www.weather.com.cn/weather/101010100.shtml")
+        if rev['raw_message'][4:] == '南京':
+            weather_init(rev, "南京", "http://www.weather.com.cn/weather/101190101.shtml")
+
+
 
 
 
