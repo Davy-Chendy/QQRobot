@@ -6,6 +6,7 @@ help="目前功能如下(第一个括号后面是使用关键字)：\n增加对�
 adddict={}
 
 now = datetime.datetime.now()
+path="E:/小赤雨本体/2.jpg"
 
 while True:
     try:
@@ -20,7 +21,7 @@ while True:
         if rev["message_type"] == "private": #私聊
             if rev['raw_message']=='在吗':
                 qq = rev['sender']['user_id']
-                cy_api.send_msg({'msg_type':'private','number':qq,'msg':'我在'})
+                cy_api.send_msg({'msg_type':'private','number':qq,'msg':'[CQ:image,file=file:///{}]'.format(path)})
         elif rev["message_type"] == "group": #群聊
             group = rev['group_id']
 
